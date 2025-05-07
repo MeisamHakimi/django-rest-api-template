@@ -10,6 +10,9 @@ services:
       - db:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+
   redis:
     image: redis:latest
     restart: always
@@ -24,11 +27,11 @@ services:
     restart: always
     ports:
       - "${RABBITMQ_PORT_NUMBER}:5672"
-      - "${RABBITMQ_MANAGEMENT_PORT_NUMBER}:15672"  # Management UI port
+      - "${RABBITMQ_MANAGEMENT_PORT_NUMBER}:15672"
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
-  
+
   api_local:
     container_name: api
     build: .
@@ -44,7 +47,7 @@ services:
       - .env
     environment:
       DJANGO_PORT: ${DJANGO_PORT}
-      DB_HOST: db  # Use service name for internal networking
+      DB_HOST: db
       DB_PORT_NUMBER: ${DB_PORT_NUMBER}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -57,10 +60,6 @@ services:
       RABBITMQ_MANAGEMENT_PORT: ${RABBITMQ_MANAGEMENT_PORT_NUMBER}
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
-    links:
-      - db
-      - redis
-      - rabbitmq
     volumes:
       - ./:/src
 
