@@ -210,8 +210,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Pulse',
-    'DESCRIPTION': 'Pulse',
+    'TITLE': '',
+    'DESCRIPTION': '',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SWAGGER_UI_DIST': 'SIDECAR',
@@ -237,11 +237,6 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'sentry': {
-            'level': 'INFO', 
-            'class': 'sentry_sdk.integrations.logging.EventHandler',
-            'formatter': 'simple'
-        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',

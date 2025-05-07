@@ -5,7 +5,7 @@ services:
     env_file:
       - .env
     ports:
-      - "${DB_PORT}:5432"
+      - "${DB_PORT_NUMBER}:5432"
     volumes:
       - db:/var/lib/postgresql/data
     environment:
@@ -45,7 +45,7 @@ services:
     environment:
       DJANGO_PORT: ${DJANGO_PORT}
       DB_HOST: db  # Use service name for internal networking
-      DB_PORT: ${DB_PORT}
+      DB_PORT_NUMBER: ${DB_PORT_NUMBER}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
