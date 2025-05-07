@@ -1,0 +1,69 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "${REDIS_PORT_NUMBER}:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+
+  rabbitmq:
+    image: rabbitmq:management
+    restart: always
+    ports:
+      - "${RABBITMQ_PORT_NUMBER}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT_NUMBER}:15672"  # Management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+  
+  api_local:
+    container_name: api
+    build: .
+    command: sh -c "entrypoint.sh"
+    image: api
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+    ports:
+      - "${DJANGO_PORT}:8000"
+    env_file:
+      - .env
+    environment:
+      DJANGO_PORT: ${DJANGO_PORT}
+      DB_HOST: db  # Use service name for internal networking
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT_NUMBER}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: ${RABBITMQ_PORT_NUMBER}
+      RABBITMQ_MANAGEMENT_PORT: ${RABBITMQ_MANAGEMENT_PORT_NUMBER}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+    links:
+      - db
+      - redis
+      - rabbitmq
+    volumes:
+      - ./:/src
+
+volumes:
+  db:
+    driver: local
